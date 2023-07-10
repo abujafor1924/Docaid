@@ -1,6 +1,8 @@
 import { FaGoogle } from "react-icons/fa";
-import useAuth from "../../../Hooks/userAuth";
+
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import useAuth from "../../../Hooks/useAuth";
 
 const Social = () => {
   const { googleLoge } = useAuth();
@@ -10,9 +12,27 @@ const Social = () => {
   const handleGoogleSignIn = () => {
     googleLoge()
       .then((result) => {
-        const user = result.user;
-        console.log(user);
-        navigat(from, { replace: true });
+        const logdUser = result.user;
+        console.log(logdUser);
+        const collectUser = {
+          name: logdUser.displayName,
+          email: logdUser.email,
+          photo: logdUser.photoURL,
+        };
+        fetch("http://localhost:5000/users", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(collectUser),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.insertedId) {
+              toast.success("Signup successful");
+              navigat(from, { replace: true });
+            }
+          });
       })
       .catch((error) => {
         console.log(error);

@@ -3,8 +3,10 @@ import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import useAuth from "../../Hooks/userAuth";
+
 import Social from "../SheardPage/SocialLogin/Social";
+import toast from "react-hot-toast";
+import useAuth from "../../Hooks/useAuth";
 
 const image_hoisting_token = import.meta.env.VITE_image_uplode_token;
 const Registretion = () => {
@@ -42,9 +44,28 @@ const Registretion = () => {
               const logdUser = result.user;
               console.log(logdUser);
               UpadteUser(data.name, imgUrl)
-                .then((result) => console.log(result))
+                .then(() => {
+                  const collectUser = {
+                    name: data.name,
+                    email: data.email,
+                    photo: imgUrl,
+                  };
+                  fetch("http://localhost:5000/users", {
+                    method: "POST",
+                    headers: {
+                      "content-type": "application/json",
+                    },
+                    body: JSON.stringify(collectUser),
+                  })
+                    .then((res) => res.json())
+                    .then((data) => {
+                      if (data.insertedId) {
+                        toast.success("Signup successful");
+                        navigat(from, { replace: true });
+                      }
+                    });
+                })
                 .catch((error) => console.log(error));
-              navigat(from, { replace: true });
             })
             .catch((error) => console.log(error));
         }
@@ -203,7 +224,7 @@ const Registretion = () => {
                 />
                 <Social />
 
-                <Link to={"/login"}>
+                <Link to={"/login"} className="mx-auto">
                   have a account? <span className="text-red-600">Login</span>
                 </Link>
               </div>
@@ -212,7 +233,7 @@ const Registretion = () => {
           <div className="text-center lg:text-left   lg:w-1/2 hidden lg:block">
             <img
               src="https://i.ibb.co/5T5JCKz/doc-aid-registretion.jpg"
-              className="h-[800px]"
+              className="h-[800px] rounded"
               alt=""
             />
           </div>

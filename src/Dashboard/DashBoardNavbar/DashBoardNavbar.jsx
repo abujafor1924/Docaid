@@ -1,8 +1,7 @@
 import { Link, NavLink } from "react-router-dom";
-import "./navbar.css";
-import useAuth from "../../../Hooks/useAuth";
+import useAuth from "../../Hooks/userAuth";
 
-const Navbar = () => {
+const DashBoardNavbar = () => {
   const { user, logdOut } = useAuth();
 
   const handleLogOut = () => {
@@ -13,15 +12,8 @@ const Navbar = () => {
   const navbar = (
     <>
       <li>
-        <NavLink to={"/"}>Home</NavLink>
+        <NavLink to={"/dashboard"}>Admin</NavLink>
       </li>
-      <li>
-        <NavLink to={"/about"}>About</NavLink>
-      </li>
-      <li>
-        <NavLink to={"/appointment"}>Appointment</NavLink>
-      </li>
-      <li>{user ? <NavLink to={"/dashboard"}>DashBord</NavLink> : ""}</li>
       <li>
         {user ? (
           <button onClick={handleLogOut} className="mt-2">
@@ -33,7 +25,6 @@ const Navbar = () => {
       </li>
     </>
   );
-
   return (
     <>
       <div className=" max-w-screen-xl navbar bg-base-100 fixed opacity-60 z-40 shadow-xl">
@@ -64,7 +55,7 @@ const Navbar = () => {
           </div>
           <Link
             to={"/"}
-            className="btn btn-ghost  text-3xl  text-sky-800 uppercase hidden md:block "
+            className="btn btn-ghost  text-3xl  text-teal-600 uppercase hidden md:block "
           >
             DocAid
           </Link>
@@ -77,4 +68,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default DashBoardNavbar;

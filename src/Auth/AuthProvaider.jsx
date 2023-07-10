@@ -1,4 +1,5 @@
 import { createContext, useEffect, useState } from "react";
+import axios from "axios";
 import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
@@ -10,6 +11,7 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
+
 import { app } from "./../firebase/firebase.config";
 
 export const AuthContext = createContext(null);
@@ -18,7 +20,7 @@ const googleProvider = new GoogleAuthProvider();
 
 const AuthProvaider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loding, setLoding] = useState(true);
+  const [loading, setLoding] = useState(true);
 
   //   Create Users
   const createUser = (email, password) => {
@@ -34,6 +36,7 @@ const AuthProvaider = ({ children }) => {
 
   //    loged out User
   const logdOut = () => {
+    setLoding(true);
     return signOut(auth);
   };
 
@@ -47,6 +50,7 @@ const AuthProvaider = ({ children }) => {
 
   //   forgate Password
   const forgetPassword = (email) => {
+    setLoding(true);
     return sendPasswordResetEmail(auth, email);
   };
 
@@ -54,7 +58,18 @@ const AuthProvaider = ({ children }) => {
   useEffect(() => {
     const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      setLoding(false);
+      // get set JWT token
+      if (currentUser) {
+        axios
+          .post("http://localhost:5000/jwt", { email: currentUser.email })
+          .then((data) => {
+            // console.log(data.data.token);
+            localStorage.setItem("acces-token", data.data.token);
+            setLoding(false);
+          });
+      } else {
+        localStorage.removeItem("acces-token");
+      }
     });
 
     // stop obserbing
@@ -65,6 +80,7 @@ const AuthProvaider = ({ children }) => {
 
   // google singin  Functonality
   const googleLoge = () => {
+    setLoding(true);
     return signInWithPopup(auth, googleProvider);
   };
 
@@ -73,7 +89,7 @@ const AuthProvaider = ({ children }) => {
   //   authInfo for Exporte
   const authInfo = {
     user,
-    loding,
+    loading,
     createUser,
     UpadteUser,
     singIn,

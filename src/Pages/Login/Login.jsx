@@ -2,8 +2,10 @@ import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 // import { ImSpinner9 } from "react-icons/im";
-import useAuth from "../../Hooks/userAuth";
+
 import Social from "../SheardPage/SocialLogin/Social";
+import { toast } from "react-hot-toast";
+import useAuth from "../../Hooks/useAuth";
 // import { useRef } from "react";
 
 const Login = () => {
@@ -20,11 +22,17 @@ const Login = () => {
   const from = location.state?.from?.pathname || "/";
   const onSubmit = (data) => {
     console.log(data);
-    singIn(data.email, data.password).then((res) => {
-      const logdUser = res.user;
-      console.log(logdUser);
-      navigat(from, { replace: true });
-    });
+    singIn(data.email, data.password)
+      .then((res) => {
+        const logdUser = res.user;
+        console.log(logdUser);
+        toast.success("Login succesfull");
+        navigat(from, { replace: true });
+      })
+      .catch((err) => {
+        console.log(err.message);
+        toast.error(err.message);
+      });
     reset();
   };
 

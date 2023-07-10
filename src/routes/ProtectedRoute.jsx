@@ -1,13 +1,14 @@
 import { Navigate, useLocation } from "react-router-dom";
 import useAuth from "../Hooks/userAuth";
+import Loder from "../Pages/SheardPage/Loder/Loder";
 
 const ProtectedRoute = ({ children }) => {
-  const { user, loding } = useAuth();
+  const { user, loading } = useAuth();
   const location = useLocation();
 
   // lodin observer
-  if (loding) {
-    return <div className="  mt-20 md:w-96 mx-auto ">loding....</div>;
+  if (loading) {
+    return <Loder />;
   }
   if (user) {
     return children;
